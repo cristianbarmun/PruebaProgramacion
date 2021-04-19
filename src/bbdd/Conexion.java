@@ -13,8 +13,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class Conexion {
     
+	private static Logger logger = LogManager.getLogger(Conexion.class);
+	
 	static String bd = "prueba_serbatic";
 	static String login = "root";
 	static String password = "";
@@ -22,13 +27,13 @@ public class Conexion {
 	
 	static String url = "jdbc:mysql://";
 	static Connection conexion; //atributo para  guardar el objeto Connection
-        
-        
+            
 	
     public static Connection getConexion() {
 	    if (conexion == null) {
 	    	crearConexion();
                 System.out.println("Conexion creada");
+                logger.info("Conexión creada satisfactoriamente");
 	    }
 	    return conexion;
     }
@@ -43,6 +48,7 @@ public class Conexion {
                 conexion.setAutoCommit(false);
 	        
 	    } catch (SQLException e) {
+	    	logger.error("Error de tipo SQL");
 	    	return false;
 	    }
 	    catch (Exception e) {
@@ -56,9 +62,10 @@ public class Conexion {
             conexion.close();
             conexion = null;
             System.out.println("La conexion a la  base de datos " + bd + " ha terminado");
+            logger.info("Conexión ha expirado");
     	
     	} catch (SQLException e) {
-    		System.out.println("Error al cerrar la conexion");
+    		logger.error("Error al cerrar la conexion");
         }
     }
    

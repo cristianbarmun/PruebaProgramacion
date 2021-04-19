@@ -18,6 +18,8 @@ Al final de esta fase, la colecciÃ³n de pacientes debe de estar ya con los infec
 package bbdd;
 
 import VO.PersonasVO;
+
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,8 +27,10 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import pruebaprogramacionfase3.Paciente;
 
 /**
@@ -40,9 +44,15 @@ public class Operaciones {
     private static Scanner lector;
     private static Collection miColeccion;
     private static PersonasVO personas;
-
+    
+    private static Logger logger = LogManager.getLogger(Operaciones.class);
+    
     public static void main(String[] args) {
-
+    	
+    	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		URL url = loader.getResource("Properties\\log4j.properties");
+		PropertyConfigurator.configure(url);
+    	
         int idCiudad;
 
         //preguntamos el id de la ciudad para ver sus usuarios
@@ -62,7 +72,7 @@ public class Operaciones {
                 simularDia();
 
             } else {
-                System.out.println("Conexion no realizada");
+            	logger.error("Conexion no realizada");
             }
         } catch (SQLException e) {
             if (conexion != null) {
@@ -77,10 +87,11 @@ public class Operaciones {
             try {
                 st.close();
             } catch (SQLException ex) {
-                Logger.getLogger(Operaciones.class.getName()).log(Level.SEVERE, null, ex);
+            	logger.error("Error "+ex.getMessage());
             }
             lector.close();
             Conexion.desconectar();
+            logger.info("Conexión cerrada");
         }
     }
 
@@ -108,6 +119,7 @@ public class Operaciones {
             System.out.println("\t" + nombre + " * " + tipo + " * " + infectado);
         }
         rs.close();
+        logger.info("ResultSet cerrado correctamente.");
         return miColeccion;
     }
 
